@@ -15,6 +15,7 @@ api = Api(app, version='1.0', title='API de Gestión de Tareas',
 
 auth_ns = api.namespace('auth', description='Operaciones de autenticación')
 tasks_ns = api.namespace('tasks', description='Operaciones con tareas')
+users_ns = api.namespace('users', description='Operaciones con usuarios')  # NUEVO
 
 # ------------------ MODELOS PARA LA DOCUMENTACIÓN ------------------ #
 
@@ -143,6 +144,19 @@ class UpdateDeleteTask(Resource):
         tarea.task_activa = False
         db.session.commit()
         return {'message': 'Tarea desactivada correctamente'}
+
+
+@users_ns.route('/')
+class GetAllUsers(Resource):
+    def get(self):
+        """Obtener todos los usuarios registrados"""
+        usuarios = User.query.all()
+        return [{
+            'user_id': u.user_id,
+            'user_nombre': u.user_nombre,
+            'user_apellidos': u.user_apellidos,
+            'user_email': u.user_email
+        } for u in usuarios], 200
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)
